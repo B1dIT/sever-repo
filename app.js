@@ -31,7 +31,8 @@ app.use(express.urlencoded({extended: true}))
 //4 delcare mongoose to work with mongoDB
 const mongoose = require('mongoose')
 //delcare database connection string url along with database name
-const database = "mongodb+srv://b1dgenz:Hunggame7@40@cluster0.jv47mkm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/vocab-builder"
+const database = "mongodb+srv://b1dgenz:Hunggame7%40%40@cluster0.jv47mkm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+"
 mongoose.connect(database)
 .then(() => console.log("connect to db success"))
 .catch((err)=> console.error("connect to db failed" + err))
