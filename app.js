@@ -1,51 +1,46 @@
-//3 declare & enable dotenv to use environment variables
+// 1. Load environment variables from .env file
 require('dotenv').config();
 
-//1 declare express framework
-const express = require('express')
-const app = express()
+// 2. Declare express
+const express = require('express');
+const app = express();
 
-//2 declare & enable cors(to share API)
-const cors = require('cors')
-//option 1: enable CORS for all frontend domain(flexibility,faster)
-app.use(cors())
+// 3. Enable CORS
+const cors = require('cors');
+app.use(cors()); // Cho phép tất cả domain gọi API
 
-////option 2: enable CORS for 1 frontend domain(security) 
-// var corsOption ={
-//     origin: 'http://your-front-end-domain.com',
-//     optionSuccessStatus: 200
-// }
-// app.request(cors(corsOption))
+// 4. Enable parser to read data from client (body)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-//3) declare & config parser (to get data from client request)
-//option1: old version of express => use body parser
-// const bodyPaser = require('body-parser')
-// const { default: mongoose } = require('mongoose')
-// app.use(bodyPaser.urlencoded())
-// app.use(bodyPaser.json())
+// 5. Connect to MongoDB
+const mongoose = require('mongoose');
 
-//option2(recommend): new version of parser
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+// 👉 Use MONGO_URI from environment variables (secure for deployment)
+const database = process.env.MONGO_URI;
 
-//4 delcare mongoose to work with mongoDB
-const mongoose = require('mongoose')
-//delcare database connection string url along with database name
-const database = "mongodb+srv://b1dgenz:Hunggame7%40@cluster0.jv47mkm.mongodb.net/vocab-builder?retryWrites=true&w=majority&appName=Cluster0"
-mongoose.connect(database)
-.then(() => console.log("connect to db success"))
-.catch((err)=> console.error("connect to db failed" + err))
-
-//5) declare and register route
-const route = require('./api/routes/vocabRoute')
-route(app)
-
-const userRoute = require('./api/routes/userRoute')
-userRoute(app)
-
-//6) declare sever port
-const port = process.env.PORT || 3001
-//7) run sever
-app.listen(port, () => {
-    console.log("server is running at http://localhost:" + port)
+mongoose.connect(database, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 })
+.then(() => console.log("✅ Connected to MongoDB successfully"))
+.catch((err) => console.error("❌ MongoDB connection failed:", err));
+
+// 6. Import and register routes
+const vocabRoute = require('./api/routes/vocabRoute');
+vocabRoute(app);
+
+const userRoute = require('./api/routes/userRoute');
+userRoute(app);
+
+// 7. Add root route to avoid Render timeout on `/`
+app.get('/', (req, res) => {
+  res.send('🚀 Backend is running!');
+});
+
+// 8. Run server on PORT from environment
+const port = process.env.PORT || 3001;
+app.listen(port, () => {
+  console.log(`✅ Server is running on http://localhost:${port}`);
+});
+
