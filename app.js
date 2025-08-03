@@ -19,10 +19,8 @@ const mongoose = require('mongoose');
 // 👉 Use MONGO_URI from environment variables (secure for deployment)
 const database = process.env.MONGO_URI;
 
-mongoose.connect(database, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(database) 
+
 .then(() => console.log("✅ Connected to MongoDB successfully"))
 .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
